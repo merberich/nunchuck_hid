@@ -19,6 +19,10 @@
 //  added code to i2c_stop(), since a problem was reported here:
 //  http://forum.arduino.cc/index.php?topic=348337.0
 //  Added lines have keyword "ADDED1".
+//
+// 2017, merberich moves initialization to init() instead of ctor, since
+// instances may not know which settings to use at instantiation.
+//
 
 
 

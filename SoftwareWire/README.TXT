@@ -1,5 +1,5 @@
 // SoftwareWire
-// 
+//
 // 2008, Raul wrote a I2C with bit banging as an exercise.
 // http://codinglab.blogspot.nl/2008/10/i2c-on-avr-using-bit-banging.html
 //
@@ -14,6 +14,9 @@
 //
 // 2015, Peter_n renames the library into "SoftwareWire",
 // and made it a drop-in replacement for the Wire library.
+//
+// 2017, merberich moves initialization to init() instead of ctor, since
+// instances may not know which settings to use at instantiation.
 //
 
  Ver 1.4.1: GPLv3 licence
@@ -38,7 +41,7 @@ More than one software I2C bus can be created.
 The SoftwareWire is only I2C Master mode.
 The clock pulse stretching is implemented, so the Slave can be another Arduino board.
 
-See the Small_example.ino how to use it. 
+See the Small_example.ino how to use it.
 Include the library, and create a SoftwareWire object with the sda and scl pin. After that is should be just like the real Wire library.
 
 

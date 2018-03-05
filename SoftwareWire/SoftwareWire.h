@@ -15,6 +15,9 @@
 // 2015, Peter_n renames the library into "SoftwareWire",
 // and made it a drop-in replacement for the Wire library.
 //
+// 2017, merberich moves initialization to init() instead of ctor, since
+// instances may not know which settings to use at instantiation.
+//
 
 
 #ifndef SoftwareWire_h
