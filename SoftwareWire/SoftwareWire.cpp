@@ -152,7 +152,7 @@ void SoftwareWire::end()
   _pullups = pullupsCopy;
 }
 
-void SoftwareWire::init(uint8_t sclPin, uint8_t sdaPin, boolean pullups, boolean detectClockStretch) {
+void SoftwareWire::init(uint8_t sdaPin, uint8_t sclPin, boolean pullups, boolean detectClockStretch) {
   _sdaPin = sdaPin;
   _sclPin = sclPin;
   _pullups = pullups;

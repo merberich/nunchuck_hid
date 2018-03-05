@@ -40,7 +40,7 @@ public:
   ~SoftwareWire();
   void end();
 
-  void init(uint8_t sclPin, uint8_t sdaPin, boolean pullups = true,
+  void init(uint8_t sdaPin, uint8_t sclPin, boolean pullups = true,
       boolean detectClockStretch = true);
 
   void begin();
