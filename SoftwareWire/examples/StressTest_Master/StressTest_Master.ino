@@ -10,17 +10,7 @@
 
 #include "SoftwareWire.h"
 
-// SoftwareWire constructor.
-// Parameters:
-//   (1) pin for the software sda
-//   (2) pin for the software scl
-//   (3) use internal pullup resistors. Default true. Set to false to disable them.
-//   (4) allow the Slave to stretch the clock pulse. Default true. Set to false for faster code.
-
-// This stress test uses A4 and A5, that makes it easy to switch between the (hardware) Wire
-// and the (software) SoftwareWire libraries.
-// myWire: sda = A4, scl = A5, turn on internal pullups, allow clock stretching by Slave
-SoftwareWire myWire( A4, A5);
+SoftwareWire myWire();
 
 #else
 
@@ -37,6 +27,17 @@ void setup()
   Serial.begin(9600);      // start serial port
   Serial.println(F("\nMaster"));
 
+  // SoftwareWire initializer.
+  // Parameters:
+  //   (1) pin for the software sda
+  //   (2) pin for the software scl
+  //   (3) use internal pullup resistors. Default true. Set to false to disable them.
+  //   (4) allow the Slave to stretch the clock pulse. Default true. Set to false for faster code.
+
+  // This stress test uses A4 and A5, that makes it easy to switch between the (hardware) Wire
+  // and the (software) SoftwareWire libraries.
+  // myWire: sda = A4, scl = A5, turn on internal pullups, allow clock stretching by Slave
+  myWire.init(A4, A5);
   myWire.begin();          // join i2c bus as master
 }
 
@@ -71,7 +72,7 @@ void loop()
   Serial.println(err);
 
   delay(2000);
-  
+
   Serial.println(F("Sending data"));
   static byte x = 0;
   myWire.beginTransmission(4);       // transmit to i2c slave device #4
@@ -92,7 +93,7 @@ void loop()
   Serial.print(n);
   Serial.print(F(", available="));
   Serial.println(myWire.available());
-  
+
 //  myWire.printStatus(Serial);      // This shows information about the SoftwareWire object.
 
   byte buffer[40];
@@ -108,6 +109,6 @@ void loop()
     Serial.print(F(", "));
   }
   Serial.println();
- 
+
   delay(2000);
 }

@@ -17,19 +17,19 @@
 
 #include <SoftwareWire.h>
 
-// SoftwareWire constructor.
-// Parameters:
-//   (1) pin for the software sda
-//   (2) pin for the software scl
-//   (3) use internal pullup resistors. Default true. Set to false to disable them.
-//   (4) allow the Slave to stretch the clock pulse. Default true. Set to false for faster code.
-//
-// Using pin 2 (software sda) and 3 (software scl) in this example.
-
-SoftwareWire myWire( 2, 3);
+SoftwareWire myWire;
 
 void setup()
 {
+  // SoftwareWire initializer.
+  // Parameters:
+  //   (1) pin for the software sda
+  //   (2) pin for the software scl
+  //   (3) use internal pullup resistors. Default true. Set to false to disable them.
+  //   (4) allow the Slave to stretch the clock pulse. Default true. Set to false for faster code.
+  //
+  // Using pin 2 (software sda) and 3 (software scl) in this example.
+  myWire.init(2, 3);
   myWire.begin(); // join i2c bus (address optional for master)
 }
 
@@ -39,8 +39,8 @@ void loop()
 {
   myWire.beginTransmission(44); // transmit to device #44 (0x2c)
                               // device address is specified in datasheet
-  myWire.write(byte(0x00));            // sends instruction byte  
-  myWire.write(val);             // sends potentiometer value byte  
+  myWire.write(byte(0x00));            // sends instruction byte
+  myWire.write(val);             // sends potentiometer value byte
   myWire.endTransmission();     // stop transmitting
 
   val++;        // increment value
