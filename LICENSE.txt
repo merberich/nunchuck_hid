@@ -1,5 +1,5 @@
 
-nunchuck_hid: Use two Nintendo WII Nunchucks as a singular USB HID gamepad
+nunchuck_hid: Use two Nintendo WII Nunchucks as a singular USB HID device
 Copyright (C) 2018 Michael Erberich <merberich@gmail.com>
 
 This program is free software: you can redistribute it and/or modify
@@ -13,11 +13,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 Attribution notices for supporting software:
-
-OBJECTIVE DEVELOPMENT GmbH's V-USB driver <https://www.obdev.at/products/vusb/index.html>
-Alejandro Leiva's vusb-for-arduino project <https://github.com/gloob/vusb-for-arduino>
-Testato & co.'s SoftwareWire I2C library for Arduino <https://github.com/Testato/SoftwareWire>
-jnw.walker@gmail.com's Wiichuck libary <https://github.com/coopermaa/Wiichuck>
+- OBJECTIVE DEVELOPMENT GmbH's V-USB driver <https://www.obdev.at/products/vusb/index.html>
 
 A copy of the GNU GPL v3 is provided below:
 

@@ -24,8 +24,8 @@ const uint32_t SERIAL_BAUD = 250000u;  // Arduino Serial baud rate
 SoftwareWire i2c_master0((uint8_t)I2C_MASTER0_SDA, (uint8_t)I2C_MASTER0_SCL);
 SoftwareWire i2c_master1((uint8_t)I2C_MASTER1_SDA, (uint8_t)I2C_MASTER1_SCL);
 
-Wiichuck left_chuck;   // Connected to software I2C master bus 0
-Wiichuck right_chuck;  // Connected to software I2C master bus 1
+WiiNunchuck left_chuck;   // Connected to software I2C master bus 0
+WiiNunchuck right_chuck;  // Connected to software I2C master bus 1
 
 bool has_left_init = false;
 bool has_right_init = false;
@@ -93,14 +93,14 @@ void setup() {
   i2c_master1.begin();
 
   // Attempt to set up the nunchucks
-  if (left_chuck.begin(&i2c_master0)) {
-    if (left_chuck.poll()) {
+  if (left_chuck.begin(&i2c_master0) == WiiNunchuck::ReturnCode::RET_SUCCESS) {
+    if (left_chuck.poll() == WiiNunchuck::ReturnCode::RET_SUCCESS) {
       left_chuck.calibrate();
     }
     has_left_init = true;
   }
-  if (right_chuck.begin(&i2c_master1)) {
-    if (right_chuck.poll()) {
+  if (right_chuck.begin(&i2c_master1) == WiiNunchuck::ReturnCode::RET_SUCCESS) {
+    if (right_chuck.poll() == WiiNunchuck::ReturnCode::RET_SUCCESS) {
       right_chuck.calibrate();
     }
     has_right_init = true;

@@ -1,6 +1,8 @@
 # NunchuckHid
 
-Nunchuck HID
+NunchuckHid: Use two Nintendo WII Nunchucks as a singular USB HID device.
+
+`@todo`
 
 ## Getting Started
 
@@ -25,11 +27,20 @@ At this point in time contributions are closed. Open an issue to request changes
 
 ## Backlog
 
-- Clean up and properly document everything
 - Provide electrical schematic for example hardware
-- Provide design logs
+- Start versioning stuff
 - Better break out header for USB information (for interpreting on workstation)
+- Modify UsbGamepad to either:
+  (a) comply with generic gamepad field requirements in Steam, and not actually provide all of the possible UI elements
+  or
+  (b) not try to be a gamepad, and rather be a generic (but unique) HID device
+- Libusb driver for this device, generic gamepad or not.
+  - Create subdirectories for Arduino-specific code, and workstation-specific code.
+  - Workstation driver should be as cross-platform as possible.
+  - Workstation build system?
 
 ## Acknowledgements
 
-`@todo`
+Inspired by [Wiichuck](https://github.com/madhephaestus/WiiChuck) library.
+Uses [v-usb](https://www.obdev.at/products/vusb/index.html) via [v-usb-for-arduino](https://github.com/gloob/vusb-for-arduino).
+Uses [SoftwareWire](https://github.com/Testato/SoftwareWire).

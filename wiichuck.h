@@ -1,12 +1,7 @@
-/*
- * Wiichuck library
- * Poll data from a Wii Nunchuck via software I2C
- *
- * Heavily influenced by jnw.walker@gmail.com Wiichuck library.
- * Extended to use SoftwareWire by Testato, provides packet definitions.
- *
- * Michael Erberich
- */
+//! WiiNunchuck
+//! Poll data from a Wii Nunchuck via software I2C emulation.
+//!
+//! Michael Erberich
 
 #ifndef WIICHUCK_H_
 #define WIICHUCK_H_
@@ -14,97 +9,139 @@
 #include <inttypes.h>
 #include <SoftwareWire.h>
 
+//! This driver supports I/O with a Wii Nunchuck over software-driven I2C on Arduino.
+//! See http://wiibrew.org/wiki/Wiimote/Extension_Controllers
+//! and http://wiibrew.org/wiki/Wiimote/Extension_Controllers/Nunchuck
+//! for implementation details.
+
+
+//! Packed data structure to pull from raw Wii Nunchuck data register (6 bytes).
+//! See cracked Nunchuck documentation for format specifics.
 typedef struct {
-	uint8_t joyX;
-  uint8_t joyY;
-  uint8_t accelX;
-  uint8_t accelY;
-  uint8_t accelZ;
+	uint8_t joy_x;
+  uint8_t joy_y;
+  uint8_t accel_x;
+  uint8_t accel_y;
+  uint8_t accel_z;
   uint8_t buttonZ : 1;
   uint8_t buttonC : 1;
-  uint8_t lsbX : 2;
-  uint8_t lsbY : 2;
-  uint8_t lsbZ : 2;
-} WiichuckData;
+  uint8_t lsb_x : 2;
+  uint8_t lsb_y : 2;
+  uint8_t lsb_z : 2;
+} WiiNunchuckData;
 
-class Wiichuck {
+class WiiNunchuck {
   public:
+    //! Delay between sequential Nunchuck register IO operations, in [us]. Empirically determined.
     static const uint8_t CHUCK_DELAY_US = 200u;
 
-    static const uint8_t CHUCK_ADDR = 0x52;  // The seven-bit address (shifted in lib)
+    //! I2C slave address of the Nunchuck.
+    static const uint8_t CHUCK_ADDR = 0x52;
+    //! Nunchuck read register length, in [bytes].
     static const uint8_t CHUCK_PACKET_SIZE_BYTES = 6u;
+    //! Nunchuck Wii Remote extension controller ID.
     const uint8_t CHUCK_ID[CHUCK_PACKET_SIZE_BYTES] = { 0x00, 0x00, 0xA4, 0x20, 0x00, 0x00 };
 
-    static const uint8_t DEFAULT_SCL_PIN = 2u;
-    static const uint8_t DEFAULT_SDA_PIN = 3u;
-
-    // Using the knockoff initialization commands that do not require decoding
+    //! Initialization command register address.
     static const uint8_t CHUCK_INIT_REG = 0xF0;
+    //! Initialization command for readback without encryption.
     static const uint8_t CHUCK_INIT_CMD = 0x55;
 
-    static const uint8_t CHUCK_TYPE_READ_REG = 0xFA;
-
+    //! Identification command register address.
     static const uint8_t CHUCK_TYPE_WRITE_REG = 0xFB;
+    //! Identification command: request next read as ID register (6 bytes).
     static const uint8_t CHUCK_TYPE_WRITE_CMD = 0x00;
 
+    //! Read command regster address.
+    static const uint8_t CHUCK_TYPE_READ_REG = 0xFA;
+    //! Read command: request that next I2C read will contain data register contents (6 bytes).
     static const uint8_t CHUCK_DATA_READ_CMD = 0x00;
 
-    uint8_t buffer[CHUCK_PACKET_SIZE_BYTES];
+    //! Possible return statuses for driver operations.
+    enum ReturnCode : uint8_t {
+      RET_SUCCESS = 0x00,      //!< Operation success.
+      RET_BAD_ARG = 0x01,      //!< Malformatted or improper parameter argument given.
+      RET_FAILED_XFER = 0x02,  //!< Underlying I2C op failed or did not transfer correct size.
+      RET_WRONG_ID = 0x03,     //!< Device ID reported was not a Nunchuck.
+      RET_NOT_BEGUN = 0x04,    //!< Driver has not been initialized.
+      RET_MAX
+    };
 
-    // Select software I2C pins to drive (pins 2 and 3 by default)
-    bool begin(SoftwareWire* i2c);
+    //! Initialize this driver, initialize the attached Wii Nunchuck, and verify ID.
+    //! Will re-initialize if already initialized, and close if @p i2c is invalid.
+    //! @param i2c Pointer to initialized software I2C master driver. Nullptr invalid.
+    //! @return Return code indicating operation result.
+    ReturnCode begin(SoftwareWire* i2c);
 
+    //! Close out this driver.
     void end();
 
-    // Requests data from the nunchuck
-    uint8_t poll();
+    //! Request most recent information from the Nunchuck.
+    //! @return Return code indicating operation result.
+    ReturnCode poll();
 
-    // Sets the datum values to current readings.
+    //! Sets current readings for the joystick and accelerometer as the referencezero values.
+    //! These offsets will be applied to the raw data in any read operation from this API.
     void calibrate();
 
+    //! Fetch last polled X-axis joystick value.
+    //! @return Value in approximately a range of (-100,100) depending on calibration.
     inline int joyX() {
-      return (int)data.parsed.joyX - (int)calib.joyX;
+      return (int)data.parsed.joy_x - (int)calib_.joy_x;
     }
+
+    //! Fetch last polled Y-axis joystick value.
+    //! @return Value in approximately a range of (-100,100) depending on calibration.
     inline int joyY() {
-      return (int)data.parsed.joyY - (int)calib.joyY;
+      return (int)data.parsed.joy_y - (int)calib_.joy_y;
     }
 
+    //! Fetch last polled X-axis accelerometer value.
     inline int accelX() {
-      return (int)((data.parsed.accelX << 2) | data.parsed.lsbX)
-          - (int)((calib.accelX << 2) | calib.lsbX);
-    }
-    inline int accelY() {
-      return (int)((data.parsed.accelY << 2) | data.parsed.lsbY)
-          - (int)((calib.accelY << 2) | calib.lsbY);
-    }
-    inline int accelZ() {
-      return (int)((data.parsed.accelZ << 2) | data.parsed.lsbZ)
-          - (int)((calib.accelZ << 2) | calib.lsbZ);
+      return (int)((data.parsed.accel_x << 2) | data.parsed.lsb_x)
+          - (int)((calib_.accel_x << 2) | calib_.lsb_x);
     }
 
+    //! Fetch last polled Y-axis accelerometer value.
+    inline int accelY() {
+      return (int)((data.parsed.accel_y << 2) | data.parsed.lsb_y)
+          - (int)((calib_.accel_y << 2) | calib_.lsb_y);
+    }
+
+    //! Fetch last polled Z-axis accelerometer value.
+    inline int accelZ() {
+      return (int)((data.parsed.accel_z << 2) | data.parsed.lsb_z)
+          - (int)((calib_.accel_z << 2) | calib_.lsb_z);
+    }
+
+    //! Fetch last polled Z-button (trigger) state.
     inline uint8_t buttonZ() {
       return !data.parsed.buttonZ;
     }
+
+    //! Fetch last polled C-button (bumper) state.
     inline uint8_t buttonC() {
       return !data.parsed.buttonC;
     }
 
   private:
-    // Retrieved data from last read, accessible as uint8_t array or struct format
+    //! Raw data from last read, accessible as uint8_t array or struct format.
     union {
       uint8_t buffer[CHUCK_PACKET_SIZE_BYTES];
-      WiichuckData parsed;
+      WiiNunchuckData parsed;
     } data;
 
-    // Decode nunchuck byte
-    //static inline uint8_t decode(uint8_t b) { return (b ^ 0x17) + 0x17; }
+    //! Calibrated reference/zero values for current nunchuck.
+    WiiNunchuckData calib_ = {};
 
-    // Calibration data for this wiichuck obj
-    WiichuckData calib = {};
-
+    //! Has this driver been initialized?
     bool is_begun_ = false;
 
-    // Each wiichuck obj should operate its own bus (all chucks have same I2C addresses)
+    //! This driver's reference to underlying I2C master driver.
+    //! Since each Wii Nunchuck / extension controller has the same I2C address, in order to
+    //! read from more than one from a single Arduino without using an additional hardware
+    //! multiplexer, it is necessary to separate each instance onto its own I2C bus. Since most
+    //! Arduino ICs only have one hardware I2C peripheral, this is done with software emulation.
     SoftwareWire* i2c_ = nullptr;
 };
 
