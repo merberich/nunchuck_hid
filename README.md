@@ -12,6 +12,7 @@ NunchuckHid: Use two Nintendo WII Nunchucks as a singular USB HID device.
 
 `@todo`
 - Testato's Arduino SoftwareWire library v1.51+ must be installed
+- Copy directory `UsbGamepad` to Arduino libraries directory.
 
 ## Versioning
 
@@ -30,7 +31,7 @@ At this point in time contributions are closed. Open an issue to request changes
 - Provide electrical schematic for example hardware
 - Start versioning stuff
 - Better break out header for USB information (for interpreting on workstation)
-- Modify UsbGamepad to either:
+- Modify UsbGamepad (and rename appropriately) to either:
   (a) comply with generic gamepad field requirements in Steam, and not actually provide all of the possible UI elements
   or
   (b) not try to be a gamepad, and rather be a generic (but unique) HID device

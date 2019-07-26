@@ -1,7 +1,7 @@
 
 #include <Arduino.h>
 #include <SoftwareWire.h>
-#include "wiichuck.h"
+#include "wii_nunchuck.h"
 
 WiiNunchuck::ReturnCode WiiNunchuck::begin(SoftwareWire* i2c) {
   if (i2c == nullptr || is_begun_) {
