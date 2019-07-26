@@ -76,6 +76,11 @@ class WiiNunchuck {
     //! Close out this driver.
     void end();
 
+    //! Configure whether or not debug statements should appear on Serial.
+    //! Not recommended if Serial is in critical use elsewhere. Disabled by default.
+    //! @param enabled Should debug prints be enabled for this driver.
+    void debugPrints(bool enabled);
+
     //! Request most recent information from the Nunchuck.
     //! @return Return code indicating operation result.
     ReturnCode poll();
@@ -136,6 +141,9 @@ class WiiNunchuck {
 
     //! Has this driver been initialized?
     bool is_begun_ = false;
+
+    //! Are debug prints enabled?
+    bool debug_prints_ = false;
 
     //! This driver's reference to underlying I2C master driver.
     //! Since each Wii Nunchuck / extension controller has the same I2C address, in order to

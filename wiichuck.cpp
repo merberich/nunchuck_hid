@@ -39,21 +39,25 @@ WiiNunchuck::ReturnCode WiiNunchuck::begin(SoftwareWire* i2c) {
     type_buf[bytes++] = i2c_->read();
   }
   if (n != CHUCK_PACKET_SIZE_BYTES || bytes != CHUCK_PACKET_SIZE_BYTES) {
-    Serial.println("Failed to read target type. Re-initialize.");
+    if (debug_prints_) {
+      Serial.println("Failed to read target type. Re-initialize.");
+    }
     return ReturnCode::RET_FAILED_XFER;
   }
   if (memcmp(type_buf, CHUCK_ID, CHUCK_PACKET_SIZE_BYTES)) {
-    Serial.println("ID of target not recognized: ");
-    for (uint8_t i = 0u; i < CHUCK_PACKET_SIZE_BYTES; i++) {
-      Serial.print("0x");
-      Serial.print(type_buf[i], HEX);
-      Serial.print(",");
+    if (debug_prints_) {
+      Serial.println("ID of target not recognized: ");
+      for (uint8_t i = 0u; i < CHUCK_PACKET_SIZE_BYTES; i++) {
+        Serial.print("0x");
+        Serial.print(type_buf[i], HEX);
+        Serial.print(",");
+      }
+      Serial.println();
+      Serial.println("Re-initialize.");
     }
-    Serial.println();
-    Serial.println("Re-initialize.");
     return ReturnCode::RET_WRONG_ID;
   }
-  else {
+  else if (debug_prints_) {
     Serial.print("Nunchuck identified.");
   }
 
@@ -72,6 +76,10 @@ void WiiNunchuck::end() {
   i2c_ = nullptr;
 }
 
+void WiiNunchuck::debugPrints(bool enable) {
+  debug_prints_ = enable;
+}
+
 WiiNunchuck::ReturnCode WiiNunchuck::poll() {
   if (!is_begun_) {
     return ReturnCode::RET_NOT_BEGUN;
@@ -83,8 +91,10 @@ WiiNunchuck::ReturnCode WiiNunchuck::poll() {
   uint8_t res = i2c_->endTransmission();
 
   if (res != SOFTWAREWIRE_NO_ERROR) {
-    Serial.print("Read command failure: ");
-    Serial.println(res);
+    if (debug_prints_) {
+      Serial.print("Read command failure: ");
+      Serial.println(res);
+    }
     return ReturnCode::RET_FAILED_XFER;
   }
 
@@ -97,10 +107,12 @@ WiiNunchuck::ReturnCode WiiNunchuck::poll() {
   }
 
   if (n != CHUCK_PACKET_SIZE_BYTES || bytes != CHUCK_PACKET_SIZE_BYTES) {
-    Serial.print("Read buffer failure, got: ");
-    Serial.print(n);
-    Serial.print(", read ");
-    Serial.println(bytes);
+    if (debug_prints_) {
+      Serial.print("Read buffer failure, got: ");
+      Serial.print(n);
+      Serial.print(", read ");
+      Serial.println(bytes);
+    }
     return ReturnCode::RET_FAILED_XFER;
   }
 
