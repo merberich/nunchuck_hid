@@ -11,6 +11,7 @@
 #include <Arduino.h>
 
 #include <UsbGamepad.h>
+#include <SoftwareWire.h>
 #include "wiichuck.h"
 
 const uint8_t I2C_MASTER0_SCL = 5u;  // Left chuck SCL
@@ -20,8 +21,11 @@ const uint8_t I2C_MASTER1_SDA = 8u;  // Right chuck SDA
 
 const uint32_t SERIAL_BAUD = 250000u;  // Arduino Serial baud rate
 
-Wiichuck left_chuck;  // Object representing left nunchuck over I2C
-Wiichuck right_chuck;  // Object representing right nunchuck over I2C
+SoftwareWire i2c_master0((uint8_t)I2C_MASTER0_SDA, (uint8_t)I2C_MASTER0_SCL);
+SoftwareWire i2c_master1((uint8_t)I2C_MASTER1_SDA, (uint8_t)I2C_MASTER1_SCL);
+
+Wiichuck left_chuck;   // Connected to software I2C master bus 0
+Wiichuck right_chuck;  // Connected to software I2C master bus 1
 
 bool has_left_init = false;
 bool has_right_init = false;
@@ -84,14 +88,18 @@ void setup() {
   // Set up Serial for debug printing
   Serial.begin(SERIAL_BAUD);
 
+  // Enable SoftwareWire on both virtual master buses
+  i2c_master0.begin();
+  i2c_master1.begin();
+
   // Attempt to set up the nunchucks
-  if (left_chuck.init(I2C_MASTER0_SDA, I2C_MASTER0_SCL)) {
+  if (left_chuck.begin(&i2c_master0)) {
     if (left_chuck.poll()) {
       left_chuck.calibrate();
     }
     has_left_init = true;
   }
-  if (right_chuck.init(I2C_MASTER1_SDA, I2C_MASTER1_SCL)) {
+  if (right_chuck.begin(&i2c_master1)) {
     if (right_chuck.poll()) {
       right_chuck.calibrate();
     }

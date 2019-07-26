@@ -3,38 +3,40 @@
 #include <SoftwareWire.h>
 #include "wiichuck.h"
 
-bool Wiichuck::init(uint8_t sda_pin, uint8_t scl_pin) {
-  // Initialize the software I2C object
-  i2c.init(sda_pin, scl_pin, true, true);
-  i2c.begin();
+bool Wiichuck::begin(SoftwareWire* i2c) {
+  i2c_ = i2c;
+  if (i2c == nullptr) {
+    is_begun_ = false;
+    return false;
+  }
 
   // Initialize the attached nunchuck
-  i2c.beginTransmission(CHUCK_ADDR);
-  i2c.write(CHUCK_INIT_REG);
-  i2c.write(CHUCK_INIT_CMD);
-  i2c.endTransmission();
+  i2c_->beginTransmission(CHUCK_ADDR);
+  i2c_->write(CHUCK_INIT_REG);
+  i2c_->write(CHUCK_INIT_CMD);
+  i2c_->endTransmission();
 
   delayMicroseconds(CHUCK_DELAY_US);
 
-  i2c.beginTransmission(CHUCK_ADDR);
-  i2c.write(CHUCK_TYPE_WRITE_REG);
-  i2c.write(CHUCK_TYPE_WRITE_CMD);
-  i2c.endTransmission();
+  i2c_->beginTransmission(CHUCK_ADDR);
+  i2c_->write(CHUCK_TYPE_WRITE_REG);
+  i2c_->write(CHUCK_TYPE_WRITE_CMD);
+  i2c_->endTransmission();
 
   delayMicroseconds(CHUCK_DELAY_US);
 
   // Confirm the device ID of the nunchuck
-  i2c.beginTransmission(CHUCK_ADDR);
-  i2c.write(CHUCK_TYPE_READ_REG);
-  i2c.endTransmission();
+  i2c_->beginTransmission(CHUCK_ADDR);
+  i2c_->write(CHUCK_TYPE_READ_REG);
+  i2c_->endTransmission();
 
   delayMicroseconds(CHUCK_DELAY_US);
 
-  uint8_t n = i2c.requestFrom(CHUCK_ADDR, CHUCK_PACKET_SIZE_BYTES);
+  uint8_t n = i2c_->requestFrom(CHUCK_ADDR, CHUCK_PACKET_SIZE_BYTES);
   uint8_t bytes = 0;
   uint8_t type_buf[CHUCK_PACKET_SIZE_BYTES];
-  while(i2c.available() && bytes < CHUCK_PACKET_SIZE_BYTES) {
-    type_buf[bytes++] = i2c.read();
+  while(i2c_->available() && bytes < CHUCK_PACKET_SIZE_BYTES) {
+    type_buf[bytes++] = i2c_->read();
   }
   if (n != CHUCK_PACKET_SIZE_BYTES || bytes != CHUCK_PACKET_SIZE_BYTES) {
     Serial.println("Failed to read target type. Re-initialize.");
@@ -60,14 +62,25 @@ bool Wiichuck::init(uint8_t sda_pin, uint8_t scl_pin) {
 	calib.accelX = calib.accelY = calib.accelZ = 125; // accel and lsb together == 500.
 	calib.lsbX = calib.lsbY = calib.lsbZ = 0;
 
+  is_begun_ = true;
+
   return true;
 }
 
+void Wiichuck::end() {
+  is_begun_ = false;
+  i2c_ = nullptr;
+}
+
 uint8_t Wiichuck::poll() {
+  if (! is_begun_) {
+    return false;
+  }
+
   // Send conversion command
-  i2c.beginTransmission(CHUCK_ADDR);
-  i2c.write(CHUCK_DATA_READ_CMD);
-  uint8_t res = i2c.endTransmission();
+  i2c_->beginTransmission(CHUCK_ADDR);
+  i2c_->write(CHUCK_DATA_READ_CMD);
+  uint8_t res = i2c_->endTransmission();
 
   if (res != SOFTWAREWIRE_NO_ERROR) {
     Serial.print("Read command failure: ");
@@ -77,10 +90,10 @@ uint8_t Wiichuck::poll() {
 
   delayMicroseconds(CHUCK_DELAY_US);
 
-  uint8_t n = i2c.requestFrom(CHUCK_ADDR, CHUCK_PACKET_SIZE_BYTES);
+  uint8_t n = i2c_->requestFrom(CHUCK_ADDR, CHUCK_PACKET_SIZE_BYTES);
   uint8_t bytes = 0;
-  while(i2c.available() && bytes < CHUCK_PACKET_SIZE_BYTES) {
-    data.buffer[bytes++] = i2c.read();
+  while(i2c_->available() && bytes < CHUCK_PACKET_SIZE_BYTES) {
+    data.buffer[bytes++] = i2c_->read();
   }
 
   if (n != CHUCK_PACKET_SIZE_BYTES || bytes != CHUCK_PACKET_SIZE_BYTES) {

@@ -52,7 +52,9 @@ class Wiichuck {
     uint8_t buffer[CHUCK_PACKET_SIZE_BYTES];
 
     // Select software I2C pins to drive (pins 2 and 3 by default)
-    bool init(uint8_t sda_pin = 3u, uint8_t scl_pin = 2u);
+    bool begin(SoftwareWire* i2c);
+
+    void end();
 
     // Requests data from the nunchuck
     uint8_t poll();
@@ -98,10 +100,12 @@ class Wiichuck {
     //static inline uint8_t decode(uint8_t b) { return (b ^ 0x17) + 0x17; }
 
     // Calibration data for this wiichuck obj
-    WiichuckData calib;
+    WiichuckData calib = {};
+
+    bool is_begun_ = false;
 
     // Each wiichuck obj should operate its own bus (all chucks have same I2C addresses)
-    SoftwareWire i2c;
+    SoftwareWire* i2c_ = nullptr;
 };
 
 #endif

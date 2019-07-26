@@ -1,6 +1,0 @@
-
-- Provide a proper README file for how to build and interface with this code
-- Clean up and properly document everything
-- Provide electrical schematic for example hardware
-- Provide design logs
-- Better break out header for USB information (for interpreting on workstation)
