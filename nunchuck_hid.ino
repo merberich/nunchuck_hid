@@ -12,7 +12,7 @@
 
 #include <SoftwareWire.h>
 #include <UsbGamepad.h>
-#include "WiiNunchuck/wii_nunchuck.h"
+#include "wii_nunchuck.h"
 
 const uint8_t I2C_MASTER0_SCL = 5u;  // Left chuck SCL
 const uint8_t I2C_MASTER0_SDA = 6u;  // Left chuck SDA
