@@ -1,10 +1,9 @@
-/*
- * @file UsbGamepad.h
- *
- * Interface for custom HID dual wii nunchuck gamepad. Defines report descriptor and associated
- *   structure for data type. Provides hook definitions necessary to use V-USB.
- * M. Erberich
- */
+//! @file UsbGamepad.h
+//!
+//! Interface for custom HID dual wii nunchuck gamepad. Defines report descriptor and associated
+//!   structure for data type. Provides hook definitions necessary to use V-USB.
+//! M. Erberich
+
 #ifndef USB_GAMEPAD_H_
 #define USB_GAMEPAD_H_
 
@@ -12,10 +11,10 @@
 
 #include <avr/io.h>
 #include <avr/wdt.h>
-#include <avr/interrupt.h>  /* for sei() */
-#include <util/delay.h>     /* for _delay_ms() */
+#include <avr/interrupt.h>  // for sei()
+#include <util/delay.h>     // for _delay_ms()
 
-#include <avr/pgmspace.h>   /* required by usbdrv.h */
+#include <avr/pgmspace.h>   // required by usbdrv.h
 
 #ifdef __cplusplus
 extern "C"
@@ -29,28 +28,26 @@ extern "C"
 }
 #endif
 
-/**
-* @brief USB HID report descriptor.
-*
-* Custom interface based on available features of dual Wii nunchuck-based controller. Each
-*   controller has:
-*   - XYZ accelerometer
-*   - C-button
-*   - Z-button
-*   - XY joystick
-* This data is formatted as the following structure
-*   uint8 [0: c0butC, 1: c0butZ, 2: c1butC, 3: c1butZ]:
-*   uint8 [7-0: c0joyX]
-*   uint8 [7-0: c0joyY]
-*   uint8 [7-0: c1joyX]
-*   uint8 [7-0: c1joyY]
-*   int8 [7-0: c0accX]
-*   int8 [7-0: c0accY]
-*   int8 [7-0: c0accZ]
-*   int8 [7-0: c1accX]
-*   int8 [7-0: c1accY]
-*   int8 [7-0: c1accZ]
-*/
+//! @brief USB HID report descriptor.
+//!
+//! Custom interface based on available features of dual Wii nunchuck-based controller. Each
+//!   controller has:
+//!   - XYZ accelerometer
+//!   - C-button
+//!   - Z-button
+//!   - XY joystick
+//! This data is formatted as the following structure
+//!   uint8 [0: c0butC, 1: c0butZ, 2: c1butC, 3: c1butZ]:
+//!   uint8 [7-0: c0joyX]
+//!   uint8 [7-0: c0joyY]
+//!   uint8 [7-0: c1joyX]
+//!   uint8 [7-0: c1joyY]
+//!   int8 [7-0: c0accX]
+//!   int8 [7-0: c0accY]
+//!   int8 [7-0: c0accZ]
+//!   int8 [7-0: c1accX]
+//!   int8 [7-0: c1accY]
+//!   int8 [7-0: c1accZ]
 PROGMEM const char usbHidReportDescriptor[USB_CFG_HID_REPORT_DESCRIPTOR_LENGTH] = {
   0x05, 0x01,        // USAGE_PAGE (GENERIC DESKTOP)
   0x09, 0x05,        // USAGE (GAME PAD)

@@ -1,12 +1,10 @@
-/*
-* @file nunchuck_hid.ino
-*
-* Exploratory project to expose data from a pair of Nintendo Wii Nunchucks over the generic USB
-*   HID device class as a single gamepad. As such, this data should be visible to any computer
-*   supporting the USB HID specification. In theory, this can be used as a subset of a proper game
-*   controller.
-* M. Erberich
-*/
+//! @file nunchuck_hid.ino
+//!
+//! Exploratory project to expose data from a pair of Nintendo Wii Nunchucks over the generic USB
+//! HID device class as a single gamepad. As such, this data should be visible to any computer
+//! supporting the USB HID specification. In theory, this can be used as a subset of a proper game
+//! controller.
+//! M. Erberich
 
 #include <Arduino.h>
 

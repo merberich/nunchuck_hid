@@ -28,6 +28,7 @@ At this point in time contributions are closed. Open an issue to request changes
 
 ## Backlog
 
+- Remainder of `@todo`'s in this document
 - Provide electrical schematic for example hardware
 - Start versioning stuff
 - Better break out header for USB information (for interpreting on workstation)
