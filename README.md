@@ -32,14 +32,22 @@ At this point in time contributions are closed. Open an issue to request changes
 - Provide electrical schematic for example hardware
 - Start versioning stuff
 - Better break out header for USB information (for interpreting on workstation)
-- Modify UsbGamepad (and rename appropriately) to either:
-  (a) comply with generic gamepad field requirements in Steam, and not actually provide all of the possible UI elements
-  or
-  (b) not try to be a gamepad, and rather be a generic (but unique) HID device
-- Libusb driver for this device, generic gamepad or not.
+- Modify UsbGamepad (and rename appropriately) to act as a new generic device (not a gamepad).
+  - Treat accelerometers as joysticks as well? Usages for generic sensors?
+  - Investigate HID composite device report descriptors to separate joysticks
+    - Alternatively, separate internal physical collections to maintain single device setup
+    - See:
+      - [HID spec](https://usb.org.10-1-108-210.causewaynow.com/sites/default/files/documents/hid1_11.pdf)
+      - [HID Usage tables](https://usb.org.10-1-108-210.causewaynow.com/sites/default/files/documents/hut1_12v2.pdf)
+      - [HID Report Descriptor tutorials](https://eleccelerator.com/tutorial-about-usb-hid-report-descriptors/)
+  - Look into adding Feature option for command + control of optional modes
+    - Calibration
+    - Reporting of device status (errors?)
+- [libusb/hidapi](https://github.com/libusb/hidapi) driver for this device
   - Create subdirectories for Arduino-specific code, and workstation-specific code.
   - Workstation driver should be as cross-platform as possible.
   - Workstation build system?
+- Apply for a proper PID for this design on [pid.codes](http://pid.codes/)
 
 ## Acknowledgements
 
