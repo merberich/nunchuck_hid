@@ -16,7 +16,7 @@ NunchuckHid: Use two Nintendo WII Nunchucks as a singular USB HID device.
 
 ## Versioning
 
-`@todo`
+This project follows the [Semantic Versioning Guidelines](https://semver.org/). Current version of the project is `0.0.1`.
 
 ## License
 
@@ -28,9 +28,8 @@ At this point in time contributions are closed. Open an issue to request changes
 
 ## Backlog
 
+- A PCB implementing the schematic
 - Remainder of `@todo`'s in this document
-- Provide electrical schematic for example hardware
-- Start versioning stuff
 - Better break out header for USB information (for interpreting on workstation)
 - Modify UsbGamepad (and rename appropriately) to act as a new generic device (not a gamepad).
   - Treat accelerometers as joysticks as well? Usages for generic sensors?
