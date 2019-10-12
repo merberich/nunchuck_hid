@@ -1,0 +1,22 @@
+EESchema-LIBRARY Version 2.4
+#encoding utf-8
+#
+# wii_nunchuck
+#
+DEF wii_nunchuck U 0 40 Y Y 1 F N
+F0 "U" -250 350 50 H V C CNN
+F1 "wii_nunchuck" -350 250 50 H V C CNN
+F2 "" -250 350 50 H I C CNN
+F3 "" -250 350 50 H I C CNN
+DRAW
+P 9 0 1 0 -250 -100 250 -100 250 200 100 200 100 150 -100 150 -100 200 -250 200 -250 -100 f
+X SCL 0 -450 100 200 R 50 50 1 1 I
+X 3V3 1 -450 -50 200 R 50 50 1 1 I
+X ~ 2 0 350 200 D 50 50 1 1 N
+X ~ 3 0 -300 200 U 50 50 1 1 N
+X GND 4 450 100 200 L 50 50 1 1 B
+X SDA 5 450 -50 200 L 50 50 1 1 B
+ENDDRAW
+ENDDEF
+#
+#End Library
